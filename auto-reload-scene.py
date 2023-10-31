@@ -4,22 +4,33 @@ import obspython as obs
 def reload_all_sources():
   # Get the current scene
   current_scene = obs.obs_frontend_get_current_scene()
-  # Get the list of sources in the scene
-  scene_items = obs.obs_scene_enum_items(current_scene)
-  # Loop through each source and reload it
-  for scene_item in scene_items:
-    # Get the source object
-    source = obs.obs_sceneitem_get_source(scene_item)
-    # Get the source id
-    source_id = obs.obs_source_get_id(source)
-    # Check if the source is a browser source
-    if source_id == "browser_source":
-      # Reload the browser source
-      settings = obs.obs_source_get_settings(source)
-      obs.obs_source_update(source, settings)
-      obs.obs_data_release(settings)
-  # Release the scene and scene items
-  obs.sceneitem_list_release(scene_items)
+  # Check if the current scene is not None
+  if current_scene is not None:
+    # Get the list of sources in the scene
+    scene_items = obs.obs_scene_enum_items(current_scene)
+    # Check if the scene items are not None
+    if scene_items is not None:
+      # Loop through each source and reload it
+      for scene_item in scene_items:
+        # Get the source object
+        source = obs.obs_sceneitem_get_source(scene_item)
+        # Get the source id
+        source_id = obs.obs_source_get_id(source)
+        # Check if the source is a browser source
+        if source_id == "browser_source":
+          # Reload the browser source
+          settings = obs.obs_source_get_settings(source)
+          obs.obs_source_update(source, settings)
+          obs.obs_data_release(settings)
+      # Release the scene and scene items
+      obs.sceneitem_list_release(scene_items)
+    else:
+      # Print a message if the scene items are None
+      print("No sources found in the current scene")
+  else:
+    # Print a message if the current scene is None
+    print("No current scene found")
+  # Release the current scene
   obs.obs_source_release(current_scene)
 
 # A function to register a timer for reloading all sources every X minutes
